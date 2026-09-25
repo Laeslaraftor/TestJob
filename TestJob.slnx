@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/Элементы решения/">
+    <File Path="init.sql" />
+    <File Path="pgpass" />
+    <File Path="README.md" />
+    <File Path="servers.json" />
+  </Folder>
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
+  <Project Path="TestJob/TestJob.csproj" />
+</Solution>

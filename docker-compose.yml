@@ -1,0 +1,65 @@
+services:
+  testjob:
+    image: ${DOCKER_REGISTRY-}testjob
+    ports:
+      - "8090:8090"
+    build:
+      context: .
+      dockerfile: TestJob/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8090
+    depends_on:
+      - postgressql
+  postgressql:
+    image: postgres
+    container_name: testjob-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: postgres_data:/var/lib/postgresql
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: testjob-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+      PGPASSFILE: /var/lib/pgadmin/pgpass
+    ports:
+      - "8080:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+      - ./servers.json:/pgadmin4/servers.json
+    secrets:
+      - source: pgadmin_pgpass
+        target: .pgpass
+    entrypoint: >
+      /bin/sh -c "
+      cp /run/secrets/.pgpass /var/lib/pgadmin/pgpass;
+      chown pgadmin:root /var/lib/pgadmin/pgpass;
+      chmod 600 /var/lib/pgadmin/pgpass;
+      /entrypoint.sh;
+      "
+    depends_on:
+      - postgressql
+
+secrets:
+  pgadmin_pgpass:
+    file: ./pgpass
+volumes:
+  postgres_data:
+  pgadmin_data:
