@@ -1,6 +1,5 @@
 using FluentValidation;
 using TestJob;
-using TestJob.Db;
 
 var builder = WebApplication.CreateBuilder(args);
 

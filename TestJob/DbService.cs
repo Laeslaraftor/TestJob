@@ -5,25 +5,25 @@ using System.Text;
 using TestJob.Controllers;
 using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
-namespace TestJob.Db
+namespace TestJob
 {
     public sealed class DbService : IDisposable
     {
-        ~DbService()
-        {
-            Dispose();
-        }
         public DbService(IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString("DatabaseConnection");
             _connection = new(connectionString);
+        }
+        ~DbService()
+        {
+            Dispose();
         }
 
         public bool IsDisposed { get; private set; }
 
         private readonly NpgsqlConnection _connection;
 
-        public Task CreateElements(IEnumerable<HtmlAnalyzeController.SelectedElement> elements)
+        public Task CreateElements(IEnumerable<HtmlPageParser.SelectedElement> elements)
         {
             if (!elements.Any())
             {
