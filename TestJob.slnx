@@ -1,6 +1,8 @@
 <Solution>
   <Folder Name="/Элементы решения/">
     <File Path="init.sql" />
+    <File Path="json_payload_1.txt" />
+    <File Path="json_payload_2.txt" />
     <File Path="pgpass" />
     <File Path="README.md" />
     <File Path="servers.json" />
